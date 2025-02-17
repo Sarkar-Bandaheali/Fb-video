@@ -1,19 +1,21 @@
-const express = require('express');
-const axios = require('axios');
+// Sarkar-MD
+import express from "express";
+import axios from "axios";
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Set EJS as the view engine
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
-// Home route
-app.get('/', (req, res) => {
-  res.render('index', { video: null, error: null });
+// Home Route
+app.get("/", (req, res) => {
+  res.render("index", { video: null, error: null });
 });
 
-// Route to handle video download request
-app.post('/download', async (req, res) => {
+// Video Download Route
+app.post("/download", async (req, res) => {
   const videoUrl = req.body.videoUrl;
   const apiUrl = `https://api.davidcyriltech.my.id/facebook2?url=${videoUrl}`;
 
@@ -21,17 +23,20 @@ app.post('/download', async (req, res) => {
     const response = await axios.get(apiUrl);
     const videoData = response.data;
 
-    if (videoData.status) {
-      res.render('index', { video: videoData.video, error: null });
+    // Checking if response is valid
+    if (videoData.status && videoData.video && Array.isArray(videoData.video.downloads)) {
+      res.render("index", { video: videoData.video, error: null });
     } else {
-      res.render('index', { video: null, error: 'Video not found or invalid link.' });
+      res.render("index", { video: null, error: "Invalid or unsupported Facebook video link." });
     }
   } catch (error) {
-    res.render('index', { video: null, error: 'An error occurred. Please try again.' });
+    console.error("API Error:", error.message);
+    res.render("index", { video: null, error: "Server error. Try again later!" });
   }
 });
 
-// Start the server
+// Start Server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+// POWERED BY BANDAHEALI
