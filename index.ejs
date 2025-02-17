@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facebook Video Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .video-details {
+      margin-top: 20px;
+    }
+    .download-btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Facebook Video Downloader</h1>
+  <form action="/download" method="POST">
+    <input type="text" name="videoUrl" placeholder="Enter Facebook Video Link" required>
+    <button type="submit">Download</button>
+  </form>
+
+  <% if (video) { %>
+    <div class="video-details">
+      <h2><%= video.title %></h2>
+      <img src="<%= video.thumbnail %>" alt="Video Thumbnail" style="max-width: 100%;">
+      <br><br>
+      <% video.downloads.forEach(download => { %>
+        <a href="<%= download.downloadUrl %>" class="download-btn" download>
+          Download <%= download.quality %>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (error) { %>
+    <p class="error"><%= error %></p>
+  <% } %>
+</body>
+</html>
