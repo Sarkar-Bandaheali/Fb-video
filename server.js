@@ -35,6 +35,31 @@ app.post("/download", async (req, res) => {
   }
 });
 
+// Force Download Route
+app.get("/force-download", async (req, res) => {
+  const videoUrl = req.query.url;
+
+  if (!videoUrl) {
+    return res.status(400).send("Invalid video URL.");
+  }
+
+  try {
+    const response = await axios({
+      url: videoUrl,
+      method: "GET",
+      responseType: "stream",
+    });
+
+    res.setHeader("Content-Disposition", 'attachment; filename="facebook_video.mp4"');
+    res.setHeader("Content-Type", "video/mp4");
+
+    response.data.pipe(res);
+  } catch (error) {
+    console.error("Download Error:", error.message);
+    res.status(500).send("Error downloading the video.");
+  }
+});
+
 // Start Server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
